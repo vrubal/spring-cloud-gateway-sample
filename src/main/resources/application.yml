@@ -1,0 +1,32 @@
+server:
+  port: 8081
+logging:
+  level:
+    org.springframework: INFO
+    org.springframework.security: DEBUG
+    org.springframework.cloud.gateway: DEBUG
+    reactor: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging.file.name: /tmp/api-gateway.log
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          lowerCaseServiceId: true
+          enabled: false
+      routes:
+        - id: pokemon-service
+          uri: lb://pokemon-service
+          predicates:
+            - Path=/pokemon-service/**
+          filters:
+            - RewritePath=/pokemon-service(?<segment>/?.*), /$\{segment}
+
+
